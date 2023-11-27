@@ -3,6 +3,7 @@
 @Time: 2023/11/23 19:54
 """
 
+
 def OperatorGA(problem, parent, **kwargs):
     """
     Crossover and mutation operators of genetic algorithm.
