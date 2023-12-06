@@ -5,7 +5,7 @@
 
 import numpy as np
 
-from .Solutions import Solutions
+from pyEC.problems.solutions import Solutions
 
 
 class Problem:
@@ -72,11 +72,13 @@ class Problem:
         This function is usually called at the beginning of algorithms.
 
         Example:
-            population = Problems.initialization(N)
+            population = problems.initialization()
         """
         if population_encoding is None:
-            population_encoding = np.random.uniform(self.lower, self.upper, size=(self.n_population,) + self.encoding_shape)
-            # population_encoding = np.zeros((self.n_population,) + self.encoding_shape)
+            if self.lower is not None and self.upper is not None:
+                population_encoding = np.random.uniform(self.lower, self.upper, size=(self.n_population,) + self.encoding_shape)
+            else:
+                population_encoding = np.zeros((self.n_population,) + self.encoding_shape)
         population = self.evaluation(population_encoding)
         return population
 
@@ -91,7 +93,7 @@ class Problem:
         population_objective = self.calculate_objective(population_encoding)
         population_constraint = self.calculate_constraint(population_encoding)
         population = Solutions(population_encoding, population_objective, population_constraint, additional_properties)
-        self.function_evaluation = self.function_evaluation + population.get_population_encoding().shape[0]
+        self.function_evaluation = self.function_evaluation + population.len()
         return population
 
     def repair(self, population_encoding):

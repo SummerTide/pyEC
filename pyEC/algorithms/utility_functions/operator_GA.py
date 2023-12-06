@@ -1,10 +1,11 @@
 """
 @Author: Jianchong Guo
-@Time: 2023/11/23 19:54
+@Time: 2023/11/27 16:29
 """
+from pyEC.problems.solutions import Solutions
 
 
-def OperatorGA(problem, parent, **kwargs):
+def operator_GA(problem, parent: Solutions):
     """
     Crossover and mutation operators of genetic algorithm.
     Uses genetic operators to generate offsprings from problem based on parent.
@@ -16,3 +17,5 @@ def OperatorGA(problem, parent, **kwargs):
 
 
     """
+    offspring = problem.evaluation(parent.get_population_encoding())
+    return offspring

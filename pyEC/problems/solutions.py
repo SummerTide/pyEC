@@ -13,10 +13,10 @@ class Solutions:
     objective values, constraint violations, and additional properties of a solution.
 
     Solutions properties:
-        population_encoding             <array>         decision variables of the solutions          (n_population, encoding_shape)
-        population_objective            <array>         objective values of the solutions            (n_population, n_objective)
-        population_constraint           <array>         constraint violations of the solutions       (b_population)
-        additional_properties           <array>         additional properties of the solutions
+        population_encoding       <array>    decision variables of the solutions          (n_population, encoding_shape)
+        population_objective      <array>    objective values of the solutions            (n_population, n_objective)
+        population_constraint     <array>    constraint violations of the solutions       (n_population)
+        additional_properties     <array>    additional properties of the solutions
 
     Solutions methods:
         Solutions                       the constructor setting all the properties of solutions
@@ -31,6 +31,30 @@ class Solutions:
         self.population_objective = population_objective
         self.population_constraint = population_constraint
         self.additional_properties = additional_properties if additional_properties is not None else np.array([])
+
+    def __getitem__(self, item):
+        if np.any(self.additional_properties):
+            additional_properties = self.additional_properties[item]
+        else:
+            additional_properties = np.array([])
+        population = Solutions(self.population_encoding[item], self.population_objective[item],
+                               self.population_constraint[item], additional_properties)
+        return population
+
+    def merge(self, offspring: 'Solutions'):
+        if np.any(self.additional_properties):
+            additional_properties = np.concatenate((self.additional_properties, offspring.additional_properties),
+                                                   axis=0)
+        else:
+            additional_properties = np.array([])
+        population = Solutions(np.concatenate((self.population_encoding, offspring.population_encoding), axis=0),
+                               np.concatenate((self.population_objective, offspring.population_objective), axis=0),
+                               np.concatenate((self.population_constraint, offspring.population_constraint), axis=0),
+                               additional_properties)
+        return population
+
+    def len(self):
+        return self.population_encoding.shape[0]
 
     def get_population_encoding(self):
         return self.population_encoding

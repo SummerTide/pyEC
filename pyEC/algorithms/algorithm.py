@@ -11,7 +11,7 @@ import numpy as np
 class Algorithm:
     """
     This is the superclass of algorithm.
-    An object of Algorithms stores the settings of the algorithm
+    An object of algorithms stores the settings of the algorithm
     and the data generated in current execution.
 
     Algorithm properties:
@@ -29,7 +29,9 @@ class Algorithm:
         not_terminated      the function called after each generation of the execution
     """
 
-    def __init__(self, parameter={}, save=-10, output_function=None):
+    def __init__(self, parameter=None, save=np.inf, output_function=None):
+        if parameter is None:
+            parameter = {}
         self.parameter = parameter
         self.save = save
         self.output_function = output_function if output_function is not None else self._default_output
@@ -40,20 +42,19 @@ class Algorithm:
 
     def _default_output(self, problem):
         """
-        The default output function of Algorithms.
+        The default output function of algorithms.
         """
-        print(
-            f"{type(self).__name__} on {problem.n_objective}-objective {type(problem).__name__} ({problem.function_evaluation / problem.max_function_evaluation * 100: .2f}%), {self.metric['runtime']: .2f}s passed...")
+        print(f"{type(self).__name__} on {problem.n_objective}-objective {type(problem).__name__} ({problem.function_evaluation / problem.max_function_evaluation * 100: .2f}%), {self.metric['runtime']: .2f}s passed...")
 
     def solve(self, problem):
         """
         Use the algorithm to solve a problem.
 
         Args:
-            problem: a Problems object
+            problem: a problems object
 
         Examples:
-            Algorithms.solve(Problems)
+            algorithms.solve(problems)
         """
         try:
             self.result = []
@@ -69,8 +70,8 @@ class Algorithm:
     def main(self, problem):
         """
         The main function of the algorithm.
-        This function is expected to be implemented in each subclass of Algorithms,
-        which is usually called by Algorithms.solve.
+        This function is expected to be implemented in each subclass of algorithms,
+        which is usually called by algorithms.solve.
         """
         pass
 
@@ -88,7 +89,7 @@ class Algorithm:
             not_finish       <bool>      True if the algorithm should not be terminated
 
         Examples:
-            while Algorithms.not_terminated(population):
+            while algorithms.not_terminated(population):
                 ...
         """
         self.metric['runtime'] = self.metric['runtime'] + time() - self.start_time
@@ -97,9 +98,12 @@ class Algorithm:
             self.problem.max_function_evaluation = self.problem.function_evaluation * self.problem.max_runtime / \
                                                    self.metric['runtime']
         num = max(1, abs(self.save))  # number of populations to save
-        index = max(0, min(min(num, len(self.result)), math.ceil(
-            num * self.problem.function_evaluation / self.problem.max_function_evaluation)) - 1)
-        self.result[index] = [self.problem.function_evaluation, population]
+        if math.isinf(num):
+            index = max(0, len(self.result))
+        else:
+            index = max(0, min(min(num, len(self.result)), math.ceil(
+                num * self.problem.function_evaluation / self.problem.max_function_evaluation)) - 1)
+        self.result.insert(index, [self.problem.function_evaluation, population])
         self.output_function(self.problem)
         not_finish = self.problem.function_evaluation < self.problem.max_function_evaluation
         assert not_finish, 'pyEC: Termination' ''
