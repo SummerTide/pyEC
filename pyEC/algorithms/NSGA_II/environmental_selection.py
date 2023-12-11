@@ -15,8 +15,7 @@ def environment_selection(population: Solutions, n_population):
     The environment selection of NSGA-II.
     """
     # non-dominated sorting
-    front = non_dominated_sort(population, n_population)
-    max_front = max(front)
+    front, max_front = non_dominated_sort(population, n_population)
     next = front < max_front
 
     # calculate the crowding distance of each solution

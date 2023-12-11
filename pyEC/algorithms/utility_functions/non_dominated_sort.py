@@ -2,11 +2,10 @@
 @Author: Jianchong Guo
 @Time: 2023/11/27 16:46
 """
-from pyEC.problems.solutions import Solutions
 import numpy as np
 
 
-def non_dominated_sort(population: Solutions, n_sort=np.inf):
+def non_dominated_sort(population, n_sort=np.inf):
     """
     Perform non-dominated sorting by using efficient non-dominated sort.
     Args:
@@ -22,7 +21,7 @@ def non_dominated_sort(population: Solutions, n_sort=np.inf):
     population_objective = population.get_population_objective()
     # n_population, n_objective = population_objective.shape
 
-    front = ENS_SS(population_objective, n_sort)
+    front, max_front = ENS_SS(population_objective, n_sort)
 
     # TODO: Implement tree-based efficient non-dominated sort (T_ENS)
     # if n_population < 500 or n_objective < 3:
@@ -30,7 +29,7 @@ def non_dominated_sort(population: Solutions, n_sort=np.inf):
     # else:
     #     front = T_ENS(population_objective, n_sort)
 
-    return front
+    return front, max_front
 
 
 def ENS_SS(population_objective, n_sort):
@@ -58,7 +57,7 @@ def ENS_SS(population_objective, n_sort):
                     front[i] = max_front
 
     front = front[location]
-    return front
+    return front, max_front
 
 
 def T_ENS(population_objective, n_sort):

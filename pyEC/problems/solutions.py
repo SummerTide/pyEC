@@ -5,6 +5,8 @@
 
 import numpy as np
 
+from pyEC.algorithms.utility_functions.non_dominated_sort import non_dominated_sort
+
 
 class Solutions:
     """
@@ -68,13 +70,14 @@ class Solutions:
     def get_additional_properties(self):
         return self.additional_properties
 
-    # def best(self):
-    #     """
-    #     Get the best solutions among multiple solutions.
-    #     Returns the feasible and non-dominates solutions among multiple solutions.
-    #     If the solutions have a single objective, the feasible solution with minimum
-    #     objective value is returned.
-    #     """
-    #     feasible = np.all(self.constraint_violation <= 0, axis=1)
-    #     if not any(feasible):
-    #         return np.array([])
+    def best(self):
+        """
+        Get the best solutions among multiple solutions.
+        Returns the feasible and non-dominates solutions among multiple solutions.
+        If the solutions have a single objective, the feasible solution with minimum
+        objective value is returned.
+        """
+        front, max_front = non_dominated_sort(self)
+        front = front
+        best = self[front == 1]
+        return best

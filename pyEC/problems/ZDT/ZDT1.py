@@ -5,7 +5,7 @@
 
 import numpy as np
 
-from ..problem import Problem
+from pyEC.problems.problem import Problem
 
 
 class ZDT1(Problem):
