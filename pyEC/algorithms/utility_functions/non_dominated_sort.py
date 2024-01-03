@@ -64,28 +64,28 @@ def T_ENS(population_objective, n_sort):
     pass
 
 
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-
-    arr = np.array([
-        (0.1, 0.1),
-        (0.2, 0.2),
-        (0.3, 0.3),
-        (0.4, 0.4),
-        (0.5, 0.5),
-        (0.6, 0.6),
-    ])
-    f = ENS_SS(arr, 10)
-    print(f)
-    plt.scatter(arr[:, 0], arr[:, 1], label='All Points')
-
-    # 添加标签和标题
-    plt.xlabel('Objective 1')
-    plt.ylabel('Objective 2')
-    plt.title('Pareto Front Example')
-
-    # 添加图例
-    plt.legend()
-
-    # 显示图形
-    plt.show()
+# if __name__ == '__main__':
+#     import matplotlib.pyplot as plt
+#
+#     arr = np.array([
+#         (0.1, 0.1),
+#         (0.2, 0.2),
+#         (0.3, 0.3),
+#         (0.4, 0.4),
+#         (0.5, 0.5),
+#         (0.6, 0.6),
+#     ])
+#     f = ENS_SS(arr, 10)
+#     print(f)
+#     plt.scatter(arr[:, 0], arr[:, 1], label='All Points')
+#
+#     # 添加标签和标题
+#     plt.xlabel('Objective 1')
+#     plt.ylabel('Objective 2')
+#     plt.title('Pareto Front Example')
+#
+#     # 添加图例
+#     plt.legend()
+#
+#     # 显示图形
+#     plt.show()

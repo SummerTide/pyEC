@@ -29,7 +29,6 @@ def original_terrain():
     term = (term1 + term2 + term3 + term4 + term5) * 1000 / 10
 
     return term + np.max(term)
-    # return term1
 
 
 def mountain_terrain(yc, xc, yt, xt, h):
@@ -67,34 +66,7 @@ def terrain_eight():
     return z
 
 
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
-    from matplotlib.ticker import MultipleLocator
-    x = np.linspace(0, 199, 200)
-    y = np.linspace(0, 199, 200)
-    x, y = np.meshgrid(x, y)
-
-    z = terrain_eight()
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    # 绘制线框
-    surf = ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='jet', edgecolor='None', vmin=0, vmax=5500)
-
-    ax.set_zlim([0, 6000])
-
-    # 设置轴标签
-    ax.set_xlabel('X/km')
-    ax.set_ylabel('Y/km')
-    ax.set_zlabel('Z/m')
-
-    # 添加颜色条
-    fig.colorbar(surf, ax=ax, orientation='vertical', pad=0.1)
-
-    # 设置 x 和 y 坐标轴的显示间隔
-    ax.xaxis.set_major_locator(MultipleLocator(100))  # 每隔50个单位显示一个刻度
-    ax.yaxis.set_major_locator(MultipleLocator(100))
-
-    # 显示图形
-    plt.show()
+# if __name__ == "__main__":
+#     from pyEC.problems.path_planning_problem.visualization import visualization_terrain
+#
+#     visualization_terrain(terrain_eight())

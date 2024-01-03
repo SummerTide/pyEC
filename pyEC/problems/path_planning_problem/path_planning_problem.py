@@ -10,17 +10,26 @@ from pyEC.problems.path_planning_problem.simulated_digital_terrain import terrai
 
 
 class path_planning_problem(Problem):
-    def __init__(self, n_population=20, n_objective=2, encoding_shape=(100, 3), max_function_evaluation=4000):
-        self.environment = terrain_three()
+    def __init__(self, n_population=20, n_objective=2, encoding_shape=(100, 3), max_function_evaluation=4000, parameter=None):
+        if parameter.get('terrain') is None:
+            self.terrain = terrain_three()
+        elif parameter['terrain'] == 3:
+            self.terrain = terrain_three()
+        elif parameter['terrain'] == 4:
+            self.terrain = terrain_four()
+        elif parameter['terrain'] == 8:
+            self.terrain = terrain_eight()
+        else:
+            raise ValueError("Invalid terrain")
         self.start = (0, 0)
         self.destination = (199, 199)
         self.safe_distance = 200
         super().__init__(n_population=n_population, n_objective=n_objective, encoding_shape=encoding_shape,
-                         max_function_evaluation=max_function_evaluation)
+                         max_function_evaluation=max_function_evaluation, parameter=parameter)
 
     def setting(self):
         self.lower = np.zeros(self.encoding_shape)
-        self.upper = np.ones(self.encoding_shape) * (self.environment.shape[0] - 1)
+        self.upper = np.ones(self.encoding_shape) * (self.terrain.shape[0] - 1)
         self.upper[:, 2] = np.inf
 
     def initialization(self, population_encoding=None):
@@ -30,11 +39,17 @@ class path_planning_problem(Problem):
             x = (self.destination[0] - self.start[0]) / (self.encoding_shape[0] - 1)
             y = (self.destination[1] - self.start[1]) / (self.encoding_shape[0] - 1)
 
-            random_array = np.random.randint(-3, 4, size=(self.n_population, list(self.encoding_shape)[0], 2))
+            random_array = np.random.randint(-1, 2, size=(self.n_population, list(self.encoding_shape)[0], 2))
+            mutation_probability = 0.2
+            zero_array = np.random.choice([0, 1],
+                                          size=(self.n_population, list(self.encoding_shape)[0], 2),
+                                          p=[mutation_probability, 1 - mutation_probability])
+            random_array = random_array * zero_array
+            random_array[0, :, :] = 0
 
             population_encoding[:, 0, 0] = self.start[0]
             population_encoding[:, 0, 1] = self.start[1]
-            population_encoding[:, 0, 2] = self.environment[self.start[0]][
+            population_encoding[:, 0, 2] = self.terrain[self.start[0]][
                                                 self.start[1]] + self.safe_distance
 
             for i in range(1, self.encoding_shape[0] - 1):
@@ -48,14 +63,18 @@ class path_planning_problem(Problem):
                                                        self.upper[0][0]).astype(np.int32)
                 arr1 = population_encoding[:, i, 0].astype(np.int32)
                 arr2 = population_encoding[:, i, 1].astype(np.int32)
-                z = self.environment[arr1, arr2] + self.safe_distance
+                z = self.terrain[arr1, arr2] + self.safe_distance
                 population_encoding[:, i, 2] = z
 
             population_encoding[:, -1, 0] = self.destination[0]
             population_encoding[:, -1, 1] = self.destination[1]
-            population_encoding[:, -1, 2] = self.environment[self.destination[0]][
+            population_encoding[:, -1, 2] = self.terrain[self.destination[0]][
                                                 self.destination[1]] + self.safe_distance
+        else:
+            population_encoding = population_encoding
         population = self.evaluation(population_encoding)
+        self.function_evaluation -= population.len()
+
         return population
 
     @staticmethod
@@ -64,15 +83,15 @@ class path_planning_problem(Problem):
         return distance
 
     def _objective_function_length(self, population_encoding):
-        fitness = np.zeros([self.n_population])
+        fitness = np.zeros([population_encoding.shape[0]])
         for i in range(1, population_encoding.shape[1]):
             fitness += self.distance(population_encoding[:, i - 1, :], population_encoding[:, i, :])
         return fitness
 
     def _objective_function_threat(self, population_encoding):
-        fitness = np.zeros([self.n_population])
-        safe = np.ones([self.n_population]) * self.safe_distance
-        point = np.zeros([self.n_population, 3])
+        fitness = np.zeros([population_encoding.shape[0]])
+        safe = np.ones([population_encoding.shape[0]]) * self.safe_distance
+        point = np.zeros([population_encoding.shape[0], 3])
         x_coords = [1, 1, 1, 0, 0, -1, -1, -1]
         y_coords = [-1, 0, 1, -1, 1, -1, 0, 1]
         for i in range(0, population_encoding.shape[1]):
@@ -83,18 +102,18 @@ class path_planning_problem(Problem):
                 y = population_encoding[:, i, 1] + y_coord
                 y = np.clip(y, self.lower[0][0], self.upper[0][0]).astype(np.int32)
                 point[:, 1] = y
-                point[:, 2] = self.environment[x, y]
+                point[:, 2] = self.terrain[x, y]
                 fitness += (safe / self.distance(population_encoding[:, i, :], point))
         return fitness
 
     def calculate_objective(self, population_encoding):
-        population_objective = np.zeros([self.n_population, self.n_objective])
+        population_objective = np.zeros([population_encoding.shape[0], self.n_objective])
         population_objective[:, 0] = self._objective_function_length(population_encoding)
         population_objective[:, 1] = self._objective_function_threat(population_encoding)
         return population_objective
 
 
-if __name__ == "__main__":
-    p = path_planning_problem()
-    pop = p.initialization()
-    print(pop)
+# if __name__ == "__main__":
+#     p = path_planning_problem()
+#     pop = p.initialization()
+#     print(pop)

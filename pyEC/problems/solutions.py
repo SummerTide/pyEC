@@ -43,6 +43,13 @@ class Solutions:
                                self.population_constraint[item], additional_properties)
         return population
 
+    def replace(self, item, offspring):
+        self.population_encoding[item] = offspring.population_encoding
+        self.population_objective[item] = offspring.population_objective
+        self.population_constraint[item] = offspring.population_constraint
+        if np.any(offspring.additional_properties):
+            self.additional_properties[item] = offspring.additional_properties
+
     def merge(self, offspring: 'Solutions'):
         if np.any(self.additional_properties):
             additional_properties = np.concatenate((self.additional_properties, offspring.additional_properties),

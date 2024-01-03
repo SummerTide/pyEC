@@ -17,7 +17,7 @@ class ZDT1(Problem):
         self.upper = np.ones(self.encoding_shape)
 
     def calculate_objective(self, population_encoding):
-        population_objective = np.zeros([self.n_population, self.n_objective])
+        population_objective = np.zeros([population_encoding.shape[0], self.n_objective])
         population_objective[:, 0] = population_encoding[:, 0]
         g = 1 + 9 * np.mean(population_encoding[:, 1:], axis=1)
         h = 1 - np.sqrt(population_objective[:, 0] / g)

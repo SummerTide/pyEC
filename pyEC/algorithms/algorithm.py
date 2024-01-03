@@ -4,8 +4,10 @@
 """
 
 import math
-from time import time
+from time import time, strftime, localtime
 import numpy as np
+import os
+import sys
 
 
 class Algorithm:
@@ -27,6 +29,7 @@ class Algorithm:
         solve               use the algorithm to solve a problem
         main                the main function of the algorithm
         not_terminated      the function called after each generation of the execution
+        save
     """
 
     def __init__(self, parameter=None, save=np.inf, output_function=None):
@@ -110,6 +113,28 @@ class Algorithm:
         self.start_time = time()
         return not_finish
 
+    def save_log(self, i, path=None, log_path=None):
+        np.set_printoptions(threshold=sys.maxsize, suppress=True)
+        if log_path is None:
+            time_now = strftime("%Y-%m-%d-%H-%M", localtime())
+            if path is None:
+                path = "./log/{}".format(time_now)
+            else:
+                path = path
+            if not os.path.exists(path):
+                os.makedirs(path)
+            log_path = path + f"/{type(self).__name__}" + ".txt"
+            log = open(log_path, 'a')
+            log.write(f"{type(self).__name__} on {self.problem.n_objective}-objective {type(self.problem).__name__}" + '\n')
+        else:
+            log_path = log_path
+            log = open(log_path, 'a')
+        log.write(f"loop: {i}" + '\n')
+        array = self.result[-1][1].best().get_population_encoding()
+        log.write(str(array) + '\n')
+        log.close()
+        return path, log_path
 
-if __name__ == "__main__":
-    Algorithm = Algorithm()
+
+# if __name__ == "__main__":
+#     Algorithm = Algorithm()

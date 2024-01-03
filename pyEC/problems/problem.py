@@ -117,7 +117,7 @@ class Problem:
             population_objective: (n_population, n_objective)
         """
 
-        population_objective = np.zeros([self.n_population, self.n_objective])
+        population_objective = np.zeros([population_encoding.shape[0], self.n_objective])
         return population_objective
 
     def calculate_constraint(self, population_encoding):
@@ -128,7 +128,7 @@ class Problem:
         Returns:
             population_constraint: (n_population)
         """
-        population_constraint = np.zeros([self.n_population])
+        population_constraint = np.zeros([population_encoding.shape[0]])
         return population_constraint
 
     def get_optimum(self, N):
@@ -150,12 +150,12 @@ class Problem:
         return r
 
 
-if __name__ == '__main__':
-    parameters = {
-        'a': 1,
-        'b': 2,
-        'c': 3
-    }
-    P = Problem(n_population=100, n_objective=2, encoding_shape=(50, 3), parameter=parameters)
-    pop = P.initialization()
-    print(pop.get_population_encoding().shape)
+# if __name__ == '__main__':
+#     parameters = {
+#         'a': 1,
+#         'b': 2,
+#         'c': 3
+#     }
+#     P = Problem(n_population=100, n_objective=2, encoding_shape=(50, 3), parameter=parameters)
+#     pop = P.initialization()
+#     print(pop.get_population_encoding().shape)

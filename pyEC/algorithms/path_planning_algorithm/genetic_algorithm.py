@@ -25,7 +25,11 @@ def getetic_algorithm(problem, parent: Solutions):
     offspring_encoding[length:] = np.where(mask[:, :, None], parent_encoding_2, parent_encoding_1)
 
     # Mutation
-    random_array = np.random.randint(-3, 4, size=(problem.n_population, list(problem.encoding_shape)[0], 2))
+    random_array = np.random.randint(-1, 2, size=(offspring_encoding_shape[0], list(problem.encoding_shape)[0], 2))
+    mutation_probability = 0.2
+    zero_array = np.random.choice([0, 1], size=(offspring_encoding_shape[0], list(problem.encoding_shape)[0], 2),
+                                  p=[mutation_probability, 1 - mutation_probability])
+    random_array = random_array * zero_array
 
     for i in range(1, problem.encoding_shape[0] - 1):
         offspring_encoding[:, i, 0] += random_array[:, i, 0]
@@ -36,7 +40,7 @@ def getetic_algorithm(problem, parent: Solutions):
                                               problem.upper[0][0]).astype(np.int32)
         arr1 = offspring_encoding[:, i, 0].astype(np.int32)
         arr2 = offspring_encoding[:, i, 1].astype(np.int32)
-        z = problem.environment[arr1, arr2] + problem.safe_distance
+        z = problem.terrain[arr1, arr2] + problem.safe_distance
         offspring_encoding[:, i, 2] = z
 
     offspring = problem.evaluation(offspring_encoding)

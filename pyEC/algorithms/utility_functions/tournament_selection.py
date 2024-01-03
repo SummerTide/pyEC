@@ -31,7 +31,7 @@ def tournament_selection(k, n_population, *args):
     return selected_location
 
 
-if __name__ == "__main__":
-    front = np.array([2, 1, 2, 1, 1, 1, 1, 1, 1, 3])
-    crowd_distance = np.array([np.inf, 1.184, np.inf, 0.9229, 1.0306, np.inf, np.inf, np.inf, np.inf, np.inf,])
-    mating_pool = tournament_selection(2, 10, front, -crowd_distance)
+# if __name__ == "__main__":
+#     front = np.array([2, 1, 2, 1, 1, 1, 1, 1, 1, 3])
+#     crowd_distance = np.array([np.inf, 1.184, np.inf, 0.9229, 1.0306, np.inf, np.inf, np.inf, np.inf, np.inf,])
+#     mating_pool = tournament_selection(2, 10, front, -crowd_distance)
